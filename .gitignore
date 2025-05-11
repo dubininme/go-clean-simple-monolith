@@ -1,0 +1,9 @@
+# Go
+/bin
+/out
+/vendor
+/tmp
+
+# IDE
+.idea
+.vscode

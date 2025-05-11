@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0.30
+    container_name: go-clean-monolith-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_database
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_password
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management-
+    container_name: go-clean-monolith-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+  app:
+    container_name: go-clean-monolith-api
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE:-Dev.Dockerfile}
+      args:
+        - APP_PLATFORM=${PLATFORM:-amd64}
+        - GITHUB_USER=${GITHUB_USER}
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - .:/go/src/app
+    ports:
+      - "7112:80"
+      - "8012:2345"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+    environment:
+      LOG_LEVEL: debug
+      DB_USER: dev_user
+      DB_PASSWORD: dev_password
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: test_database
+      DB_CONNECTIONS: 5
+      BROKER_HOST: rabbitmq
+      BROKER_PORT: 5672
+      BROKER_USER: rabbitmq
+      BROKER_PASSWORD: rabbitmq
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+    command: >
+      reflex -r \.go --start-service --decoration=none -- dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient --continue ./cmd/api/main.go
+
+  worker:
+    container_name: go-clean-monolith-worker
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE:-Dev.Dockerfile}
+      args:
+        - APP_PLATFORM=${PLATFORM:-amd64}
+        - GITHUB_USER=${GITHUB_USER}
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - .:/go/src/app
+    ports:
+      - "8013:2345"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+    environment:
+      LOG_LEVEL: debug
+      DB_USER: dev_user
+      DB_PASSWORD: dev_password
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: test_database
+      DB_CONNECTIONS: 5
+      BROKER_HOST: rabbitmq
+      BROKER_PORT: 5672
+      BROKER_USER: rabbitmq
+      BROKER_PASSWORD: rabbitmq
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+    command: >
+      reflex -r \.go --start-service --decoration=none -- dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient --continue ./cmd/worker/main.go
+
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./db/migrations:/migrations
+    command: -path=/migrations -database "mysql://dev_user:dev_password@tcp(db:3306)/test_database" up
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+  es_data:
