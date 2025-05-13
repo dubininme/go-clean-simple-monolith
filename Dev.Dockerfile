@@ -18,9 +18,10 @@ COPY . /go/src/app
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=${APP_PLATFORM}
 ENV PATH="${PATH}:/go/bin/linux_${APP_PLATFORM}"
 
-RUN apk add --no-cache git build-base && \
+RUN apk add --no-cache git build-base curl && \
     echo "machine github.com login ${GITHUB_USER} password ${GITHUB_TOKEN}" > ~/.netrc && \
     go mod download -x && \
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /go/bin v1.56.2 && \
     go install github.com/google/wire/cmd/wire@latest && \
     go install github.com/cespare/reflex@latest && \
     go install github.com/golang/mock/mockgen@v1.6.0 && \

@@ -1,4 +1,4 @@
-.PHONY: help dev prod build up down logs migrate migrate-up migrate-down
+.PHONY: help dev prod build up down logs migrate migrate-up migrate-down lint
 
 help:
 	@echo "Project Makefile commands:"
@@ -10,6 +10,7 @@ help:
 	@echo "  logs         - Show logs for all services"
 	@echo "  migrate-up   - Apply all up migrations (docker-compose run migrate)"
 	@echo "  migrate-down - Rollback last migration (docker-compose run migrate with down)"
+	@echo "  lint         - Run golangci-lint"
 
 # Variables for docker-compose
 PLATFORM ?= amd64
@@ -51,3 +52,7 @@ migrate-up:
 # Rollback last migration
 migrate-down:
 	docker-compose run --rm migrate migrate -path=/migrations -database "mysql://dev_user:dev_password@tcp(db:3306)/test_database" down 1
+
+# Run golangci-lint
+lint:
+	golangci-lint run --timeout=2m ./...
