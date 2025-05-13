@@ -1,79 +1,43 @@
-CREATE TABLE client (
-    id CHAR(36) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone VARCHAR(32),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL DEFAULT NULL
-);
-
-CREATE TABLE courier (
-    id CHAR(36) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    phone VARCHAR(32),
-    vehicle VARCHAR(64),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL DEFAULT NULL
-);
-
 CREATE TABLE product (
-    id CHAR(36) PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    price INT NOT NULL,
+    price BIGINT NOT NULL,
     sku VARCHAR(64),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL DEFAULT NULL
-);
-
-CREATE TABLE cart (
-    id CHAR(36) PRIMARY KEY,
-    client_id CHAR(36),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL DEFAULT NULL,
-    FOREIGN KEY (client_id) REFERENCES client(id)
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL
 );
 
 CREATE TABLE `order` (
-    id CHAR(36) PRIMARY KEY,
-    client_id CHAR(36),
-    courier_id CHAR(36),
+    id INT PRIMARY KEY AUTO_INCREMENT,
     status VARCHAR(32) NOT NULL,
-    amount INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL DEFAULT NULL,
-    FOREIGN KEY (client_id) REFERENCES client(id),
-    FOREIGN KEY (courier_id) REFERENCES courier(id)
+    amount BIGINT NOT NULL,
+    currency VARCHAR(8) NOT NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    cancelled_at BIGINT NULL DEFAULT NULL
 );
 
 CREATE TABLE order_item (
-    id CHAR(36) PRIMARY KEY,
-    order_id CHAR(36),
-    product_id CHAR(36),
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    product_id INT,
     quantity INT NOT NULL,
-    price INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL DEFAULT NULL,
+    price BIGINT NOT NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES `order`(id),
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
 CREATE TABLE shipment (
-    id CHAR(36) PRIMARY KEY,
-    order_id CHAR(36),
-    courier_id CHAR(36),
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    address VARCHAR(255),
+    phone VARCHAR(32),
     status VARCHAR(32) NOT NULL,
-    shipped_at TIMESTAMP NULL DEFAULT NULL,
-    delivered_at TIMESTAMP NULL DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL DEFAULT NULL,
-    FOREIGN KEY (order_id) REFERENCES `order`(id),
-    FOREIGN KEY (courier_id) REFERENCES courier(id)
+    shipped_at BIGINT NULL DEFAULT NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES `order`(id)
 ); 

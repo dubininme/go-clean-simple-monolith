@@ -1,10 +1,7 @@
 package v1
 
 import (
-	"github.com/dubininme/go-clean-simple-monolith/internal/application/usecase/command"
-	"github.com/dubininme/go-clean-simple-monolith/internal/config"
-	"github.com/dubininme/go-clean-simple-monolith/internal/domain/repository"
-	"github.com/dubininme/go-clean-simple-monolith/internal/domain/service"
+	v1 "github.com/dubininme/go-clean-simple-monolith/internal/delivery/http/v1/handler"
 	"github.com/labstack/echo/v4"
 )
 
@@ -13,14 +10,12 @@ type Server struct {
 }
 
 func NewServer(
-	orderRepo repository.OrderRepository,
-	discountService *service.DiscountService,
-	orderEventPublisher *service.OrderEventPublisher,
-	cfg *config.Config,
-	productSearchRepo repository.ProductSearchRepository,
-	markOrderPaidUsecase *command.MarkOrderPaidUsecase,
+	orderHandler *v1.OrderHandler,
+	productHandler *v1.ProductHandler,
+	authHandler *v1.AuthHandler,
 ) *Server {
-	e := NewRouter(orderRepo, discountService, orderEventPublisher, cfg, productSearchRepo, markOrderPaidUsecase)
+
+	e := NewRouter(orderHandler, productHandler, authHandler)
 	return &Server{echoEngine: e}
 }
 

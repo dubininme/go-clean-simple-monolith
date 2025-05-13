@@ -33,11 +33,15 @@ func (u *mysqlOrderUow) DoInTx(ctx context.Context, fn func(repos *uow.OrderRepo
 	}()
 
 	orderRepo := NewMysqlOrderRepository(tx)
+	orderItemRepo := NewMysqlOrderItemRepository(tx)
 	outboxRepo := NewMysqlOutboxRepository(tx)
+	shipmentRepo := NewMysqlShipmentRepository(tx)
 
 	repos := &uow.OrderRepos{
-		OrderRepository:  orderRepo,
-		OutboxRepository: outboxRepo,
+		OrderRepository:     orderRepo,
+		OrderItemRepository: orderItemRepo,
+		OutboxRepository:    outboxRepo,
+		ShipmentRepository:  shipmentRepo,
 	}
 
 	return fn(repos)

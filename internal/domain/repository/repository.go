@@ -6,50 +6,41 @@ import (
 	"github.com/dubininme/go-clean-simple-monolith/internal/domain/entity"
 )
 
-type CartRepository interface {
-	FindById(id string) (*entity.Cart, error)
-	Save(cart *entity.Cart) error
-	Delete(id string) error
-	List() ([]*entity.Cart, error)
-}
-
-type ClientRepository interface {
-	FindById(id string) (*entity.Client, error)
-	Save(client *entity.Client) error
-	Delete(id string) error
-	List() ([]*entity.Client, error)
-}
-
-type CourierRepository interface {
-	FindById(id string) (*entity.Courier, error)
-	Save(courier *entity.Courier) error
-	Delete(id string) error
-	List() ([]*entity.Courier, error)
-}
-
-type OrderRepository interface {
-	FindById(ctx context.Context, id string) (*entity.Order, error)
-	Save(ctx context.Context, order *entity.Order) error
+type ListOptions struct {
+	Limit     uint64
+	Offset    uint64
+	SortBy    string
+	SortOrder string
+	Filters   map[string]any
 }
 
 type ProductRepository interface {
-	FindById(id string) (*entity.Product, error)
+	FindById(ctx context.Context, id int32) (*entity.Product, error)
+	Save(ctx context.Context, product entity.Product) (int32, error)
+	Delete(ctx context.Context, id int32) error
+	List(ctx context.Context, opts ListOptions) ([]entity.Product, error)
 }
 
 type ProductSearchRepository interface {
-	Search(ctx context.Context, query string) ([]string, error)
+	Search(ctx context.Context, query string) ([]entity.Product, error)
 }
 
-type ShipmentRepository interface {
-	FindById(id string) (*entity.Shipment, error)
-	Save(shipment *entity.Shipment) error
-	Delete(id string) error
-	List() ([]*entity.Shipment, error)
+// TODO: split into read and write repositories
+type OrderRepository interface {
+	FindById(ctx context.Context, id int32) (*entity.Order, error)
+	List(ctx context.Context, opts ListOptions) ([]entity.Order, error)
+	Save(ctx context.Context, order entity.Order) (int32, error)
+	Delete(ctx context.Context, id int32) error
 }
 
 type OrderItemRepository interface {
-	FindById(id string) (*entity.OrderItem, error)
-	Save(item *entity.OrderItem) error
-	Delete(id string) error
-	List() ([]*entity.OrderItem, error)
+	FindByOrderId(ctx context.Context, orderId int32) ([]entity.OrderItem, error)
+	Save(ctx context.Context, item entity.OrderItem) (int32, error)
+	SaveBatch(ctx context.Context, items []entity.OrderItem) error
+	Delete(ctx context.Context, id int32) error
+}
+
+type ShipmentRepository interface {
+	FindByOrderId(ctx context.Context, orderId int32) (*entity.Shipment, error)
+	Save(ctx context.Context, shipment entity.Shipment) (int32, error)
 }

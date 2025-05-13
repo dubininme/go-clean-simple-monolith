@@ -39,7 +39,28 @@ func (h *OrderHandler) GetOrder(c echo.Context) error {
 	return c.JSON(http.StatusOK, order)
 }
 
-func (h *OrderHandler) MarkPaid(c echo.Context) error {
+func (h *OrderHandler) CreateOrder(c echo.Context) error {
+	req := CreateOrderRequest{}
+
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+	}
+
+	order := &domain.Order{}
+
+	CreateOrderUsecase := &command.CreateOrderUsecase{
+		OrderRepo:           h.orderRepo,
+		DiscountService:     h.discountService,
+		OrderEventPublisher: h.orderEventPublisher,
+	}
+
+	if err := c.Bind(order); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+	}
+	return c.JSON(http.StatusOK, order)
+}
+
+func (h *OrderHandler) MarkOrderPaid(c echo.Context) error {
 	id := c.Param("id")
 	if err := h.markOrderPaidUsecase.Execute(c.Request().Context(), id); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "could not mark order as paid"})

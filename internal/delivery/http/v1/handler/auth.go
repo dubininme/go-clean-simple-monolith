@@ -17,7 +17,7 @@ func NewAuthHandler(jwtSecret string) *AuthHandler {
 }
 
 func (h *AuthHandler) Login(c echo.Context) error {
-	// Пример: всегда user_id=1, без проверки пароля
+	// Example: always user_id=1, no password check
 	claims := jwt.MapClaims{
 		"user_id": 1,
 		"exp":     time.Now().Add(time.Hour * 72).Unix(),

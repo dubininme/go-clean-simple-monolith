@@ -8,8 +8,10 @@ import (
 )
 
 type OrderRepos struct {
-	OrderRepository  domainRepository.OrderRepository
-	OutboxRepository appRepository.OutboxRepository
+	OrderRepository     domainRepository.OrderRepository
+	OutboxRepository    appRepository.OutboxRepository
+	OrderItemRepository domainRepository.OrderItemRepository
+	ShipmentRepository  domainRepository.ShipmentRepository
 }
 
 type OrderUnitOfWork interface {

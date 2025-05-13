@@ -13,7 +13,5 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	if err = bootstrap.Run(cfg); err != nil {
-		log.Fatalf("failed to run: %v", err)
-	}
+	bootstrap.Run(cfg)
 }

@@ -17,6 +17,11 @@ type Config struct {
 	DB             DBConfig
 	JWTSecret      string `envconfig:"JWT_SECRET"`
 	ElasticAddress string `envconfig:"ELASTIC_ADDRESS" default:"http://localhost:9200"`
+	OutboxPoller   OutboxPollerConfig
+}
+
+type OutboxPollerConfig struct {
+	BatchSize int `envconfig:"OUTBOX_POLLER_BATCH_SIZE" default:"100"`
 }
 
 func LoadConfig() (*Config, error) {

@@ -16,6 +16,16 @@ func Run(cfg *config.Config) {
 	if err != nil {
 		log.Fatalf("failed to connect to db: %v", err)
 	}
+	orderRepo := mysql.NewMysqlOrderRepository(db)
+
+	uow := mysql.NewMysqlOrderUow(db)
+	markOrderPaidUsecase := &command.MarkOrderPaidUsecase{
+		Uow: uow,
+	}
+
+	orderHandler := v1.NewOrderHandler(orderRepo, discountService, orderEventPublisher, markOrderPaidUsecase)
+	productHandler := v1.NewProductHandler(productSearchRepo)
+	authHandler := v1.NewAuthHandler(cfg.JWTSecret)
 
 	esClient, err := elasticsearch.NewClient(cfg.ElasticAddress)
 	if err != nil {
@@ -23,13 +33,8 @@ func Run(cfg *config.Config) {
 	}
 	productSearchRepo := elasticsearch.NewProductSearchRepository(esClient)
 
-	orderRepo := mysql.NewMysqlOrderRepository(db)
 	discountService := &service.DiscountService{}
 	orderEventPublisher := &service.OrderEventPublisher{}
-
-	markOrderPaidUsecase := &command.MarkOrderPaidUsecase{
-		// инициализация зависимостей, если нужны
-	}
 
 	server := v1.NewServer(orderRepo, discountService, orderEventPublisher, cfg, productSearchRepo, markOrderPaidUsecase)
 	if err := server.Start(); err != nil {

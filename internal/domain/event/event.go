@@ -1,43 +1,29 @@
 package event
 
-import "time"
-
-type OrderCancelled struct {
-	OrderId     string
-	CancelledAt time.Time
-}
-
 type OrderCreated struct {
-	OrderId   string
+	OrderId   int32
 	ClientId  string
-	CreatedAt time.Time
+	CreatedAt int64
 }
 
 type OrderPaid struct {
-	OrderId string
-	Amount  int
-	PaidAt  time.Time
+	OrderId int32
+	Amount  int64
+	PaidAt  int64
 }
 
-type OrderShipped struct {
-	OrderId   string
-	ShippedAt time.Time
+type OrderCancelled struct {
+	OrderId     int32
+	CancelledAt int64
 }
 
 type ShipmentCreated struct {
-	ShipmentId string
-	OrderId    string
-	CreatedAt  time.Time
+	ShipmentId int32
+	OrderId    int32
+	CreatedAt  int64
 }
 
-type ShipmentDelivered struct {
-	ShipmentId  string
-	OrderId     string
-	DeliveredAt time.Time
-}
-
-type ShipmentShipped struct {
-	ShipmentId string
-	OrderId    string
-	ShippedAt  time.Time
+type OrderShipped struct {
+	OrderId   int32
+	ShippedAt int64
 }
