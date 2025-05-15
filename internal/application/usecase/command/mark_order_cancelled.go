@@ -25,17 +25,7 @@ func (uc *MarkOrderCancelledUsecase) Execute(ctx context.Context, event domainEv
 
 		order.Status = domainEntity.OrderStatusCancelled
 		order.CancelledAt = &event.CancelledAt
-		if err := repos.OrderRepository.Save(ctx, *order); err != nil {
-			return err
-		}
-
-		shipment, err := repos.ShipmentRepository.FindByOrderId(ctx, event.OrderId)
-		if err != nil {
-			return err
-		}
-
-		shipment.Status = domainEntity.ShipmentStatusCancelled
-		if err := repos.ShipmentRepository.Save(ctx, *shipment); err != nil {
+		if _, err := repos.OrderRepository.Save(ctx, *order); err != nil {
 			return err
 		}
 

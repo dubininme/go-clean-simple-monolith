@@ -4,7 +4,6 @@ services:
   db:
     image: mysql:8.0.30
     container_name: go-clean-monolith-mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: test_database
@@ -21,7 +20,7 @@ services:
       - mysql_data:/var/lib/mysql
 
   rabbitmq:
-    image: rabbitmq:3-management-
+    image: rabbitmq:3-management
     container_name: go-clean-monolith-rabbitmq
     ports:
       - "5672:5672"

@@ -25,7 +25,7 @@ RUN apk add --no-cache git build-base curl && \
     go install github.com/google/wire/cmd/wire@latest && \
     go install github.com/cespare/reflex@latest && \
     go install github.com/golang/mock/mockgen@v1.6.0 && \
-    go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.10.1 && \
+    go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.4.1 && \
     go install github.com/go-delve/delve/cmd/dlv@latest
 
 EXPOSE 80 2345

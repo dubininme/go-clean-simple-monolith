@@ -19,9 +19,7 @@ func Run(cfg *config.Config) {
 	orderRepo := mysql.NewMysqlOrderRepository(db)
 
 	uow := mysql.NewMysqlOrderUow(db)
-	markOrderPaidUsecase := &command.MarkOrderPaidUsecase{
-		Uow: uow,
-	}
+	markOrderPaidUsecase := command.NewMarkOrderPaidUsecase(uow)
 
 	orderHandler := v1.NewOrderHandler(orderRepo, discountService, orderEventPublisher, markOrderPaidUsecase)
 	productHandler := v1.NewProductHandler(productSearchRepo)

@@ -45,7 +45,6 @@ type Shipment struct {
 	OrderId   int32
 	Address   string
 	Phone     string
-	Status    string
 	ShippedAt *int64
 	CreatedAt int64
 	UpdatedAt int64

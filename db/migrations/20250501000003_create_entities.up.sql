@@ -35,7 +35,6 @@ CREATE TABLE shipment (
     order_id INT,
     address VARCHAR(255),
     phone VARCHAR(32),
-    status VARCHAR(32) NOT NULL,
     shipped_at BIGINT NULL DEFAULT NULL,
     created_at BIGINT NOT NULL,
     updated_at BIGINT NOT NULL,
