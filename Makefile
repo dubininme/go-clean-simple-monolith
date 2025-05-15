@@ -28,7 +28,7 @@ dev:
 # Build containers (dev)
 build:
 	PLATFORM=$(PLATFORM) GITHUB_USER=$(GITHUB_USER) GITHUB_TOKEN=$(GITHUB_TOKEN) \
-		docker-compose build
+		docker-compose build --no-cache
 
 # Start docker-compose (dev)
 run:
@@ -38,7 +38,6 @@ run:
 # Stop and remove containers
 down:
 	docker-compose down
-
 # Show logs for all services
 logs:
 	docker-compose logs -f --tail=100

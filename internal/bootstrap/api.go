@@ -4,10 +4,10 @@ import (
 	"log"
 
 	"github.com/dubininme/go-clean-simple-monolith/internal/application/usecase/command"
+	"github.com/dubininme/go-clean-simple-monolith/internal/application/usecase/query"
 	"github.com/dubininme/go-clean-simple-monolith/internal/config"
 	v1 "github.com/dubininme/go-clean-simple-monolith/internal/delivery/http/v1"
-	"github.com/dubininme/go-clean-simple-monolith/internal/domain/service"
-	"github.com/dubininme/go-clean-simple-monolith/internal/infrastructure/elasticsearch"
+	v1handler "github.com/dubininme/go-clean-simple-monolith/internal/delivery/http/v1/handler"
 	"github.com/dubininme/go-clean-simple-monolith/internal/infrastructure/mysql"
 )
 
@@ -17,24 +17,16 @@ func Run(cfg *config.Config) {
 		log.Fatalf("failed to connect to db: %v", err)
 	}
 	orderRepo := mysql.NewMysqlOrderRepository(db)
-
 	uow := mysql.NewMysqlOrderUow(db)
+
+	findOrderUsecase := query.NewFindOrderUsecase(orderRepo)
+	createOrderUsecase := command.NewCreateOrderUsecase(uow)
 	markOrderPaidUsecase := command.NewMarkOrderPaidUsecase(uow)
 
-	orderHandler := v1.NewOrderHandler(orderRepo, discountService, orderEventPublisher, markOrderPaidUsecase)
-	productHandler := v1.NewProductHandler(productSearchRepo)
-	authHandler := v1.NewAuthHandler(cfg.JWTSecret)
+	orderHandler := v1handler.NewOrderHandler(findOrderUsecase, createOrderUsecase, markOrderPaidUsecase)
 
-	esClient, err := elasticsearch.NewClient(cfg.ElasticAddress)
-	if err != nil {
-		log.Fatalf("failed to connect to elasticsearch: %v", err)
-	}
-	productSearchRepo := elasticsearch.NewProductSearchRepository(esClient)
-
-	discountService := &service.DiscountService{}
-	orderEventPublisher := &service.OrderEventPublisher{}
-
-	server := v1.NewServer(orderRepo, discountService, orderEventPublisher, cfg, productSearchRepo, markOrderPaidUsecase)
+	router := v1.NewRouter(orderHandler)
+	server := v1.NewServer(router)
 	if err := server.Start(); err != nil {
 		log.Fatalf("server error: %v", err)
 	}

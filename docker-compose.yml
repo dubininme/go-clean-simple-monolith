@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./tmp/mysql_data:/var/lib/mysql
 
   rabbitmq:
     image: rabbitmq:3-management

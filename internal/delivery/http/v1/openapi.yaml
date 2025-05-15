@@ -3,6 +3,9 @@ info:
   title: Ecommerce API
   version: 1.0.0
 
+servers:
+  - url: /api/v1
+
 paths:
   /orders:
     post:

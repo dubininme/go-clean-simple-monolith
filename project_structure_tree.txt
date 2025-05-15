@@ -1,4 +1,25 @@
 .
+├── __debug_bin1070681707
+├── __debug_bin1101075188
+├── __debug_bin1181734748
+├── __debug_bin1208358266
+├── __debug_bin1219460857
+├── __debug_bin1248231175
+├── __debug_bin134329561
+├── __debug_bin2066288252
+├── __debug_bin2217232863
+├── __debug_bin2285807470
+├── __debug_bin2403401097
+├── __debug_bin3061029884
+├── __debug_bin3888725599
+├── __debug_bin3987206209
+├── __debug_bin4092746199
+├── __debug_bin4166212793
+├── __debug_bin491131804
+├── __debug_bin578977500
+├── __debug_bin833502776
+├── __debug_bin869791491
+├── __debug_bin928227178
 ├── build
 │   ├── api
 │   │   └── Dockerfile
@@ -11,8 +32,9 @@
 │       └── main.go
 ├── db
 │   └── migrations
-│       ├── 20250501000001_create_users.down.sql
-│       └── 20250501000001_create_users.up.sql
+│       ├── 20250501000003_create_entities.down.sql
+│       └── 20250501000003_create_entities.up.sql
+├── Dev.Dockerfile
 ├── docker-compose.yml
 ├── go.mod
 ├── go.sum
@@ -21,9 +43,7 @@
 │   │   ├── event
 │   │   │   └── handler
 │   │   │       ├── order_cancelled.go
-│   │   │       ├── order_created.go
 │   │   │       ├── order_paid.go
-│   │   │       ├── order_prepared_for_shipment.go
 │   │   │       └── order_shipped.go
 │   │   ├── repository
 │   │   │   └── outbox_repository.go
@@ -31,22 +51,15 @@
 │   │   │   └── order_uow.go
 │   │   └── usecase
 │   │       ├── command
-│   │       │   ├── create_client_test.go
-│   │       │   ├── create_client.go
-│   │       │   ├── create_courier_test.go
-│   │       │   ├── create_courier.go
 │   │       │   ├── create_order_test.go
 │   │       │   ├── create_order.go
 │   │       │   ├── create_product_test.go
 │   │       │   ├── create_product.go
-│   │       │   ├── create_shipment_test.go
-│   │       │   ├── create_shipment.go
+│   │       │   ├── mark_order_cancelled.go
 │   │       │   └── mark_order_paid.go
 │   │       └── query
-│   │           ├── get_cart_test.go
-│   │           ├── get_cart.go
-│   │           ├── get_order_test.go
-│   │           ├── get_order.go
+│   │           ├── find_order_test.go
+│   │           ├── find_order.go
 │   │           ├── list_orders_test.go
 │   │           ├── list_orders.go
 │   │           ├── list_products_test.go
@@ -55,7 +68,6 @@
 │   │           └── search_products.go
 │   ├── bootstrap
 │   │   ├── api.go
-│   │   ├── wire.go
 │   │   └── worker.go
 │   ├── config
 │   │   └── config.go
@@ -68,9 +80,9 @@
 │   │   └── http
 │   │       └── v1
 │   │           ├── handler
-│   │           │   ├── client.go
-│   │           │   ├── courier.go
-│   │           │   └── order.go
+│   │           │   ├── auth.go
+│   │           │   ├── order.go
+│   │           │   └── product.go
 │   │           ├── middleware
 │   │           │   ├── auth.go
 │   │           │   ├── cors.go
@@ -79,63 +91,60 @@
 │   │           ├── router.go
 │   │           └── server.go
 │   ├── domain
+│   │   ├── aggregate
+│   │   │   └── aggregate.go
 │   │   ├── entity
-│   │   │   ├── cart.go
-│   │   │   ├── client.go
-│   │   │   ├── courier.go
-│   │   │   ├── order_item.go
-│   │   │   ├── order.go
-│   │   │   ├── product.go
-│   │   │   └── shippment.go
+│   │   │   └── entity.go
 │   │   ├── event
-│   │   │   ├── order_cancelled.go
-│   │   │   ├── order_created.go
-│   │   │   ├── order_paid.go
-│   │   │   ├── order_prepared_for_shipment.go
-│   │   │   └── order_shipped.go
+│   │   │   └── event.go
 │   │   ├── repository
-│   │   │   ├── client_repository.go
-│   │   │   ├── courier_repository.go
-│   │   │   ├── order_repository.go
-│   │   │   ├── product_repository.go
-│   │   │   └── shipment_repository.go
+│   │   │   └── repository.go
 │   │   ├── service
 │   │   │   ├── discount_service_test.go
 │   │   │   ├── discount_service.go
 │   │   │   └── order_event_publisher.go
 │   │   └── valueobject
 │   │       ├── address.go
-│   │       └── money.go
+│   │       ├── email.go
+│   │       ├── money.go
+│   │       ├── phone.go
+│   │       └── sku.go
 │   └── infrastructure
 │       ├── broker
 │       │   ├── order_consumer.go
 │       │   ├── order_publisher.go
 │       │   └── rabbitmq.go
 │       ├── elasticsearch
-│       │   └── client.go
+│       │   ├── client.go
+│       │   └── product_search.go
 │       ├── external
-│       │   ├── dhl
-│       │   │   └── client.go
-│       │   └── google
+│       │   └── shipping_provider
 │       │       └── client.go
 │       ├── mysql
-│       │   ├── client_repository.go
+│       │   ├── common.go
+│       │   ├── order_item_repository.go
 │       │   ├── order_repository.go
 │       │   ├── order_uow.go
 │       │   ├── outbox_repository.go
-│       │   └── product_repository.go
+│       │   ├── product_repository.go
+│       │   └── shipment_repository.go
 │       └── scheduler
 │           └── outbox_poller.go
 ├── Makefile
 ├── pkg
 │   ├── auth
 │   │   └── jwt.go
+│   ├── gen
+│   │   └── oapi
+│   │       └── oapi.go
 │   └── logger
 │       └── zerolog.go
 ├── project_structure_tree.txt
 ├── README.md
 └── tests
     ├── __snapshots__
-    └── fixtures
+    ├── fixtures
+    │   └── orders.sql
+    └── integration_order_handler_test.go
 
-47 directories, 92 files
+49 directories, 99 files

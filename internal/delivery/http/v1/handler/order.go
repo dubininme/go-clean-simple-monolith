@@ -11,15 +11,15 @@ import (
 )
 
 type OrderHandler struct {
-	findOrderUsecase     query.FindOrderUsecase
-	createOrderUsecase   command.CreateOrderUsecase
-	markOrderPaidUsecase command.MarkOrderPaidUsecase
+	findOrderUsecase     *query.FindOrderUsecase
+	createOrderUsecase   *command.CreateOrderUsecase
+	markOrderPaidUsecase *command.MarkOrderPaidUsecase
 }
 
 func NewOrderHandler(
-	findOrderUsecase query.FindOrderUsecase,
-	createOrderUsecase command.CreateOrderUsecase,
-	markOrderPaidUsecase command.MarkOrderPaidUsecase,
+	findOrderUsecase *query.FindOrderUsecase,
+	createOrderUsecase *command.CreateOrderUsecase,
+	markOrderPaidUsecase *command.MarkOrderPaidUsecase,
 ) *OrderHandler {
 	return &OrderHandler{
 		findOrderUsecase:     findOrderUsecase,
