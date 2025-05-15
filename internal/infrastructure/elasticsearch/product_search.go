@@ -18,7 +18,7 @@ func NewProductSearchRepository(client *elasticsearch.Client) *ProductSearchRepo
 }
 
 type esHit struct {
-	ID string `json:"_id"`
+	Id string `json:"_id"`
 }
 type esHits struct {
 	Hits struct {
@@ -42,7 +42,7 @@ func (r *ProductSearchRepository) Search(ctx context.Context, query string) ([]s
 	}
 	ids := make([]string, 0, len(hits.Hits.Hits))
 	for _, h := range hits.Hits.Hits {
-		ids = append(ids, h.ID)
+		ids = append(ids, h.Id)
 	}
 	return ids, nil
 }

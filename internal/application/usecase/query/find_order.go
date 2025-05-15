@@ -3,7 +3,7 @@ package query
 import (
 	"context"
 
-	"github.com/dubininme/go-clean-simple-monolith/internal/domain/entity"
+	"github.com/dubininme/go-clean-simple-monolith/internal/domain/aggregate"
 	"github.com/dubininme/go-clean-simple-monolith/internal/domain/repository"
 )
 
@@ -15,10 +15,11 @@ func NewFindOrderUsecase(orderRepo repository.OrderRepository) *FindOrderUsecase
 	return &FindOrderUsecase{orderRepo: orderRepo}
 }
 
-func (uc *FindOrderUsecase) Execute(ctx context.Context, id int32) (*entity.Order, error) {
-	order, err := uc.orderRepo.FindById(ctx, id)
+func (uc *FindOrderUsecase) Execute(ctx context.Context, id int32) (*aggregate.OrderWithItems, error) {
+	extOrder, err := uc.orderRepo.FindOrderWithItemsById(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	return order, nil
+
+	return extOrder, nil
 }

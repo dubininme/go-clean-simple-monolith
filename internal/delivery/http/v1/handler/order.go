@@ -37,7 +37,7 @@ func (h *OrderHandler) CreateOrder(c echo.Context) error {
 	orderItems := make([]command.CreateOrderItemCommand, len(req.Items))
 	for i, item := range req.Items {
 		orderItems[i] = command.CreateOrderItemCommand{
-			ProductID: item.ProductId,
+			ProductId: item.ProductId,
 			Quantity:  item.Quantity,
 			Price:     item.Price,
 		}
@@ -52,7 +52,7 @@ func (h *OrderHandler) CreateOrder(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "could not create order"})
 	}
 
-	return c.JSON(http.StatusOK, orderId)
+	return c.JSON(http.StatusOK, oapi.CreateOrderResponse{Id: &orderId})
 }
 
 func (h *OrderHandler) GetOrder(c echo.Context) error {
@@ -68,7 +68,27 @@ func (h *OrderHandler) GetOrder(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "order not found"})
 	}
 
-	return c.JSON(http.StatusOK, order)
+	resItems := make([]oapi.OrderItem, len(order.Items))
+	for i, item := range order.Items {
+		resItems[i] = oapi.OrderItem{
+			Id:        item.Id,
+			ProductId: item.ProductId,
+			Quantity:  item.Quantity,
+			Price:     item.Price,
+		}
+	}
+
+	res := oapi.Order{
+		Id:          order.Id,
+		Status:      oapi.OrderStatus(order.Status),
+		Amount:      order.Amount,
+		Currency:    order.Currency,
+		CreatedAt:   order.CreatedAt,
+		CancelledAt: order.CancelledAt,
+		Items:       resItems,
+	}
+
+	return c.JSON(http.StatusOK, res)
 }
 
 func (h *OrderHandler) MarkOrderPaid(c echo.Context) error {

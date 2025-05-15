@@ -40,6 +40,7 @@ paths:
           name: id
           schema:
             type: integer
+            format: int32
           required: true
           description: Order ID
       responses:
@@ -72,6 +73,9 @@ components:
   schemas:
     CreateOrderRequest:
       type: object
+      required:
+        - currency
+        - items
       properties:
         currency:
           type: string
@@ -79,12 +83,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CreateOrderItem'
-      required:
-        - currency
-        - items
 
     CreateOrderItem:
       type: object
+      required:
+        - product_id
+        - quantity
+        - price
       properties:
         product_id:
           type: integer
@@ -95,43 +100,15 @@ components:
         price:
           type: integer
           format: int64
-      required:
-        - product_id
-        - quantity
-        - price
 
     CreateOrderResponse:
       type: object
       properties:
         id:
           type: integer
-
+          format: int32
     Order:
       type: object
-      properties:
-        id:
-          type: integer
-        status:
-          type: string
-          enum:
-            - pending
-            - paid
-            - cancelled
-        amount:
-          type: integer
-        currency:
-          type: string
-        created_at:
-          type: integer
-        updated_at:
-          type: integer
-        cancelled_at:
-          type: integer
-          nullable: true
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/OrderItem'
       required:
         - id
         - status
@@ -140,9 +117,43 @@ components:
         - created_at
         - updated_at
         - items
+      properties:
+        id:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+            - pending
+            - paid
+            - cancelled
+        amount:
+          type: integer
+          format: int64
+        currency:
+          type: string
+        created_at:
+          type: integer
+          format: int64
+        updated_at:
+          type: integer
+          format: int64
+        cancelled_at:
+          type: integer
+          format: int64
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
 
     OrderItem:
       type: object
+      required:
+        - id
+        - product_id
+        - quantity
+        - price
       properties:
         id:
           type: integer
@@ -156,8 +167,3 @@ components:
         price:
           type: integer
           format: int64
-      required:
-        - id
-        - product_id
-        - quantity
-        - price

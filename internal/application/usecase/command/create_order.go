@@ -13,7 +13,7 @@ type CreateOrderCommand struct {
 	Items    []CreateOrderItemCommand
 }
 type CreateOrderItemCommand struct {
-	ProductID int32
+	ProductId int32
 	Quantity  int32
 	Price     int64
 }
@@ -26,8 +26,10 @@ func NewCreateOrderUsecase(uow uow.OrderUnitOfWork) *CreateOrderUsecase {
 	return &CreateOrderUsecase{uow: uow}
 }
 
-func (uc *CreateOrderUsecase) Execute(ctx context.Context, cmd CreateOrderCommand) error {
-	return uc.uow.DoInTx(ctx, func(repos *uow.OrderRepos) error {
+func (uc *CreateOrderUsecase) Execute(ctx context.Context, cmd CreateOrderCommand) (int32, error) {
+	var orderId int32
+
+	err := uc.uow.DoInTx(ctx, func(repos *uow.OrderRepos) error {
 		var amount int64
 		for _, item := range cmd.Items {
 			amount += int64(item.Price) * int64(item.Quantity)
@@ -41,18 +43,21 @@ func (uc *CreateOrderUsecase) Execute(ctx context.Context, cmd CreateOrderComman
 			UpdatedAt: time.Now().Unix(),
 		}
 
-		orderId, err := repos.OrderRepository.Save(ctx, order)
+		id, err := repos.OrderRepository.Save(ctx, order)
 		if err != nil {
 			return err
 		}
+		// Use closure to pass orderId from inside the transaction to the outer scope,
+		// since DoInTx only allows returning an error, but we also need to return the created order ID.
+		orderId = id
 
 		preparedOrderItems := make([]domainEntity.OrderItem, len(cmd.Items))
 		for i, item := range cmd.Items {
 			preparedOrderItems[i] = domainEntity.OrderItem{
-				ProductId: item.ProductID,
+				ProductId: item.ProductId,
 				Quantity:  item.Quantity,
 				Price:     item.Price,
-				OrderId:   orderId,
+				OrderId:   id,
 				CreatedAt: time.Now().Unix(),
 				UpdatedAt: time.Now().Unix(),
 			}
@@ -64,4 +69,10 @@ func (uc *CreateOrderUsecase) Execute(ctx context.Context, cmd CreateOrderComman
 
 		return nil
 	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	return orderId, nil
 }

@@ -38,19 +38,19 @@ type CreateOrderRequest struct {
 
 // CreateOrderResponse defines model for CreateOrderResponse.
 type CreateOrderResponse struct {
-	Id *int `json:"id,omitempty"`
+	Id *int32 `json:"id,omitempty"`
 }
 
 // Order defines model for Order.
 type Order struct {
-	Amount      int         `json:"amount"`
-	CancelledAt *int        `json:"cancelled_at"`
-	CreatedAt   int         `json:"created_at"`
+	Amount      int64       `json:"amount"`
+	CancelledAt *int64      `json:"cancelled_at"`
+	CreatedAt   int64       `json:"created_at"`
 	Currency    string      `json:"currency"`
-	Id          int         `json:"id"`
+	Id          int32       `json:"id"`
 	Items       []OrderItem `json:"items"`
 	Status      OrderStatus `json:"status"`
-	UpdatedAt   int         `json:"updated_at"`
+	UpdatedAt   int64       `json:"updated_at"`
 }
 
 // OrderStatus defines model for Order.Status.
@@ -149,7 +149,7 @@ type ClientInterface interface {
 	PostOrders(ctx context.Context, body PostOrdersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetOrdersId request
-	GetOrdersId(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetOrdersId(ctx context.Context, id int32, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// PostOrdersIdPaid request
 	PostOrdersIdPaid(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -191,7 +191,7 @@ func (c *Client) PostOrders(ctx context.Context, body PostOrdersJSONRequestBody,
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetOrdersId(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetOrdersId(ctx context.Context, id int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetOrdersIdRequest(c.Server, id)
 	if err != nil {
 		return nil, err
@@ -283,7 +283,7 @@ func NewPostOrdersRequestWithBody(server string, contentType string, body io.Rea
 }
 
 // NewGetOrdersIdRequest generates requests for GetOrdersId
-func NewGetOrdersIdRequest(server string, id int) (*http.Request, error) {
+func NewGetOrdersIdRequest(server string, id int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -402,7 +402,7 @@ type ClientWithResponsesInterface interface {
 	PostOrdersWithResponse(ctx context.Context, body PostOrdersJSONRequestBody, reqEditors ...RequestEditorFn) (*PostOrdersResponse, error)
 
 	// GetOrdersIdWithResponse request
-	GetOrdersIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetOrdersIdResponse, error)
+	GetOrdersIdWithResponse(ctx context.Context, id int32, reqEditors ...RequestEditorFn) (*GetOrdersIdResponse, error)
 
 	// PostOrdersIdPaidWithResponse request
 	PostOrdersIdPaidWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*PostOrdersIdPaidResponse, error)
@@ -522,7 +522,7 @@ func (c *ClientWithResponses) PostOrdersWithResponse(ctx context.Context, body P
 }
 
 // GetOrdersIdWithResponse request returning *GetOrdersIdResponse
-func (c *ClientWithResponses) GetOrdersIdWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetOrdersIdResponse, error) {
+func (c *ClientWithResponses) GetOrdersIdWithResponse(ctx context.Context, id int32, reqEditors ...RequestEditorFn) (*GetOrdersIdResponse, error) {
 	rsp, err := c.GetOrdersId(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
