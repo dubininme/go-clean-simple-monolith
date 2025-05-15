@@ -13,7 +13,6 @@ import (
 
 	"github.com/dubininme/go-clean-simple-monolith/internal/bootstrap"
 	"github.com/dubininme/go-clean-simple-monolith/internal/config"
-	"github.com/gkampitakis/snaptest"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/require"
 )
