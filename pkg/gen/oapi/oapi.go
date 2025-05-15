@@ -25,9 +25,9 @@ const (
 
 // CreateOrderItem defines model for CreateOrderItem.
 type CreateOrderItem struct {
-	Price     int `json:"price"`
-	ProductId int `json:"product_id"`
-	Quantity  int `json:"quantity"`
+	Price     int64 `json:"price"`
+	ProductId int32 `json:"product_id"`
+	Quantity  int32 `json:"quantity"`
 }
 
 // CreateOrderRequest defines model for CreateOrderRequest.
@@ -58,10 +58,10 @@ type OrderStatus string
 
 // OrderItem defines model for OrderItem.
 type OrderItem struct {
-	Id        int `json:"id"`
-	Price     int `json:"price"`
-	ProductId int `json:"product_id"`
-	Quantity  int `json:"quantity"`
+	Id        int32 `json:"id"`
+	Price     int64 `json:"price"`
+	ProductId int32 `json:"product_id"`
+	Quantity  int32 `json:"quantity"`
 }
 
 // PostOrdersJSONRequestBody defines body for PostOrders for application/json ContentType.

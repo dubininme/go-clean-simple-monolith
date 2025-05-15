@@ -88,10 +88,13 @@ components:
       properties:
         product_id:
           type: integer
+          format: int32
         quantity:
           type: integer
+          format: int32
         price:
           type: integer
+          format: int64
       required:
         - product_id
         - quantity
@@ -143,12 +146,16 @@ components:
       properties:
         id:
           type: integer
+          format: int32
         product_id:
           type: integer
+          format: int32
         quantity:
           type: integer
+          format: int32
         price:
           type: integer
+          format: int64
       required:
         - id
         - product_id

@@ -6,6 +6,7 @@ import (
 
 	"github.com/dubininme/go-clean-simple-monolith/internal/application/usecase/command"
 	"github.com/dubininme/go-clean-simple-monolith/internal/application/usecase/query"
+	"github.com/dubininme/go-clean-simple-monolith/pkg/gen/oapi"
 	"github.com/labstack/echo/v4"
 )
 
@@ -27,6 +28,33 @@ func NewOrderHandler(
 	}
 }
 
+func (h *OrderHandler) CreateOrder(c echo.Context) error {
+	var req oapi.CreateOrderRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+	}
+
+	orderItems := make([]command.CreateOrderItemCommand, len(req.Items))
+	for i, item := range req.Items {
+		orderItems[i] = command.CreateOrderItemCommand{
+			ProductID: item.ProductId,
+			Quantity:  item.Quantity,
+			Price:     item.Price,
+		}
+	}
+	cmd := command.CreateOrderCommand{
+		Currency: req.Currency,
+		Items:    orderItems,
+	}
+
+	orderId, err := h.createOrderUsecase.Execute(c.Request().Context(), cmd)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "could not create order"})
+	}
+
+	return c.JSON(http.StatusOK, orderId)
+}
+
 func (h *OrderHandler) GetOrder(c echo.Context) error {
 	paramId := c.Param("id")
 
@@ -41,15 +69,6 @@ func (h *OrderHandler) GetOrder(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, order)
-}
-
-func (h *OrderHandler) CreateOrder(c echo.Context) error {
-	var req CreateOrderRequest
-	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
-	}
-
-	return c.JSON(http.StatusOK, orderId)
 }
 
 func (h *OrderHandler) MarkOrderPaid(c echo.Context) error {

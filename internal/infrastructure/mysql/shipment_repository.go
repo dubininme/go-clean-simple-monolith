@@ -21,7 +21,6 @@ type shipmentDAO struct {
 	OrderId   int32  `db:"order_id"`
 	Address   string `db:"address"`
 	Phone     string `db:"phone"`
-	Status    string `db:"status"`
 	ShippedAt *int64 `db:"shipped_at"`
 	CreatedAt int64  `db:"created_at"`
 	UpdatedAt int64  `db:"updated_at"`
@@ -56,8 +55,8 @@ func (r *MysqlShipmentRepository) Save(ctx context.Context, shipment entity.Ship
 // insertShipment builds and executes an insert query, returning the new id
 func (r *MysqlShipmentRepository) insertShipment(ctx context.Context, d shipmentDAO) (int32, error) {
 	queryBuilder := sq.Insert("shipments").
-		Columns("order_id", "address", "phone", "status", "shipped_at", "created_at", "updated_at").
-		Values(d.OrderId, d.Address, d.Phone, d.Status, d.ShippedAt, d.CreatedAt, d.UpdatedAt)
+		Columns("order_id", "address", "phone", "shipped_at", "created_at", "updated_at").
+		Values(d.OrderId, d.Address, d.Phone, d.ShippedAt, d.CreatedAt, d.UpdatedAt)
 	query, args, err := queryBuilder.ToSql()
 	if err != nil {
 		return 0, err
@@ -79,7 +78,6 @@ func (r *MysqlShipmentRepository) updateShipment(ctx context.Context, d shipment
 		Set("order_id", d.OrderId).
 		Set("address", d.Address).
 		Set("phone", d.Phone).
-		Set("status", d.Status).
 		Set("shipped_at", d.ShippedAt).
 		Set("updated_at", d.UpdatedAt).
 		Where(sq.Eq{"id": d.Id})
@@ -100,7 +98,6 @@ func toShipmentEntity(dao shipmentDAO) entity.Shipment {
 		OrderId:   dao.OrderId,
 		Address:   dao.Address,
 		Phone:     dao.Phone,
-		Status:    dao.Status,
 		ShippedAt: dao.ShippedAt,
 		CreatedAt: dao.CreatedAt,
 		UpdatedAt: dao.UpdatedAt,
@@ -113,7 +110,6 @@ func toShipmentDAO(shipment entity.Shipment) shipmentDAO {
 		OrderId:   shipment.OrderId,
 		Address:   shipment.Address,
 		Phone:     shipment.Phone,
-		Status:    shipment.Status,
 		ShippedAt: shipment.ShippedAt,
 		CreatedAt: shipment.CreatedAt,
 		UpdatedAt: shipment.UpdatedAt,

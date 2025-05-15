@@ -7,6 +7,7 @@ require github.com/labstack/echo-jwt/v4 v4.3.1
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Masterminds/squirrel v1.5.4 // indirect
+	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.7.0 // indirect
 	github.com/elastic/go-elasticsearch/v8 v8.18.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
@@ -23,6 +24,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/oapi-codegen/oapi-codegen/v2 v2.4.1 // indirect
+	github.com/oapi-codegen/runtime v1.1.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
